@@ -17,3 +17,5 @@ C:\Users\danil\source\repos\BlackjackGame2\BlackjackGame2\obj\Debug\net8.0-windo
 C:\Users\danil\source\repos\BlackjackGame2\BlackjackGame2\obj\Debug\net8.0-windows\BlackjackGame2.pdb
 C:\Users\danil\source\repos\BlackjackGame2\BlackjackGame2\obj\Debug\net8.0-windows\BlackjackGame2.genruntimeconfig.cache
 C:\Users\danil\source\repos\BlackjackGame2\BlackjackGame2\obj\Debug\net8.0-windows\ref\BlackjackGame2.dll
+C:\Users\danil\source\repos\BlackjackGame2\BlackjackGame2\obj\Debug\net8.0-windows\BlackjackGame2.sourcelink.json
+C:\Users\danil\source\repos\BlackjackGame2\BlackjackGame2\obj\Debug\net8.0-windows\BlackjackGame2.Properties.Resources.resources

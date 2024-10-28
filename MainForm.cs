@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Media;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.VisualBasic.ApplicationServices;
 using Newtonsoft.Json;
 
 namespace BlackjackGame2
@@ -12,16 +14,22 @@ namespace BlackjackGame2
     {
         // Definir variáveis do jogador, dealer e o valor da aposta
         private Player player;
+        private SoundPlayer drawcardsfx;
+        private SoundPlayer shufflesfx;
+        private SoundPlayer hitsfx;
         private Dealer dealer;
         private static readonly HttpClient client = new HttpClient();
         private string deckId;
         private bool betdone = false;
         int action = 0;
+
         public MainForm()
         {
             InitializeComponent();
             player = new Player { Balance = 1000 }; // Exemplo de saldo inicial
             dealer = new Dealer();
+            hitsfx = new SoundPlayer("C:\\Users\\danil\\source\\repos\\BlackjackGame2\\BlackjackGame2\\hit.sfx.wav");
+            shufflesfx = new SoundPlayer("C:\\Users\\danil\\source\\repos\\BlackjackGame2\\BlackjackGame2\\shufflecards.sfx.wav");
             Dinheiro.Value = 1000;
         }
 
@@ -36,9 +44,10 @@ namespace BlackjackGame2
             Dealerscore.Text = "Pontuação do dealer:";
 
             deckId = await CreateDeck();
-            cartadealer1.Visible = false; cartadealer2.Visible = false; cartadealer3.Visible = false; cartadealer4.Visible = true;
+            cartadealer1.Visible = false; cartadealer2.Visible = false; cartadealer3.Visible = false; cartadealer4.Visible = false;
             cartaplayer1.Visible = false; cartaplayer2.Visible = false; cartaplayer3.Visible = false; cartaplayer4.Visible = false; cartaplayer5.Visible = false;
-            if (betdone == false) { 
+            if (betdone == false)
+            {
                 MessageBox.Show("Novo jogo! Faça suas apostas antes de começar.");
                 Aposta.Enabled = true;
                 Hitbtn.Enabled = false;
@@ -52,8 +61,7 @@ namespace BlackjackGame2
         // Cria um novo baralho embaralhado
         private async Task<string> CreateDeck()
         {
-            string url = "https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1";
-            var response = await client.GetStringAsync(url);
+            var response = await client.GetStringAsync("https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1");
             dynamic deck = JsonConvert.DeserializeObject(response);
             return deck.deck_id;
         }
@@ -61,6 +69,7 @@ namespace BlackjackGame2
         // Distribui as cartas iniciais (2 para o jogador e 2 para o dealer)
         private async Task DealInitialCards()
         {
+            drawcardsfx = new SoundPlayer("C:\\Users\\danil\\source\\repos\\BlackjackGame2\\BlackjackGame2\\drawcard.sfx.wav");
             Hitbtn.Enabled = true;
             Standbtn.Enabled = true;
             Doublebtn.Enabled = true;
@@ -68,10 +77,10 @@ namespace BlackjackGame2
             player.PlayerHand.Cards.Clear();
             dealer.DealerHand.Cards.Clear();
             ScoreManager scoreManager = new ScoreManager();
-            player.PlayerHand.Cards.Add(await DrawCard()); cartaplayer1.Visible = true;
-            dealer.DealerHand.Cards.Add(await DrawCard()); cartadealer1.Visible = true;
-            player.PlayerHand.Cards.Add(await DrawCard()); cartaplayer2.Visible = true;
-            dealer.DealerHand.Cards.Add(await DrawCard()); cartadealer2.Visible = true;
+            player.PlayerHand.Cards.Add(await DrawCard()); cartaplayer1.Visible = true; drawcardsfx.Play(); Thread.Sleep(1000);
+            dealer.DealerHand.Cards.Add(await DrawCard()); cartadealer1.Visible = true; drawcardsfx.Play(); Thread.Sleep(1000);
+            player.PlayerHand.Cards.Add(await DrawCard()); cartaplayer2.Visible = true; drawcardsfx.Play(); Thread.Sleep(1000);
+            dealer.DealerHand.Cards.Add(await DrawCard()); cartadealer2.Visible = true; drawcardsfx.Play(); Thread.Sleep(1000);
             cartaplayer1.Load(player.PlayerHand.Cards[0].ImageUrl);
             cartaplayer2.Load(player.PlayerHand.Cards[1].ImageUrl);
             cartadealer1.Load(dealer.DealerHand.Cards[0].ImageUrl);
@@ -109,15 +118,16 @@ namespace BlackjackGame2
                 ImageUrl = draw.cards[0].image
             };
         }
-
         // Jogador escolhe 'Hit' (pedir mais uma carta)
         private async void Hitbtn_Click(object sender, EventArgs e)
         {
             ScoreManager scoreManager = new ScoreManager();
-
+            hitsfx.Play();
+            Thread.Sleep(1000);
+            drawcardsfx.Play();
             // O jogador recebe uma nova carta e ela é adicionada à mão
             player.PlayerHand.Cards.Add(await DrawCard());
-
+            drawcardsfx.Play();
             // Atualiza a imagem da nova carta (supondo que seja cartaplayer3, por exemplo)
             if (action == 0)
             {
@@ -141,7 +151,7 @@ namespace BlackjackGame2
             // Calcula e exibe a nova pontuação do jogador
             int playerScore = scoreManager.CalculateHandValue(player.PlayerHand.Cards);
             Playerscore.Text = $"Sua pontuação: {playerScore}";
-
+            Thread.Sleep(2500);
             // Verifica se o jogador estourou (bust)
             if (player.PlayerHand.IsBust())
             {
@@ -164,13 +174,17 @@ namespace BlackjackGame2
         // Verifica o vencedor após o turno do dealer
         private async void CheckWinner()
         {
-            if (player.PlayerHand.GetTotalValue() > dealer.DealerHand.GetTotalValue())
+            if (player.PlayerHand.GetTotalValue() > dealer.DealerHand.GetTotalValue() || dealer.DealerHand.GetTotalValue() > 21)
             {
                 MessageBox.Show("Você ganhou!");
                 Dinheiro.Value += Aposta.Value * 2; // Jogador ganha o dobro da aposta
             }
-            else
+            else if(player.PlayerHand.GetTotalValue() == dealer.DealerHand.GetTotalValue())
             {
+                MessageBox.Show("O jogo empatou");
+                Dinheiro.Value += Aposta.Value;
+            }
+            else{
                 MessageBox.Show("O dealer ganhou!");
             }
             betdone = false;
@@ -193,7 +207,6 @@ namespace BlackjackGame2
                         Dinheiro.Value -= Aposta.Value;
                         StartNewGame();
                     }
-
                 }
                 else
                 {
@@ -249,15 +262,20 @@ namespace BlackjackGame2
         public class Dealer
         {
             public Hand DealerHand { get; set; } = new Hand();
+            private SoundPlayer drawcardsfx;
 
             // Dealer joga até atingir 17 ou mais
             // Dealer joga até atingir 17 ou mais
             public async Task Play(Func<Task<Card>> drawCardFunc, MainForm form)
             {
+                drawcardsfx = new SoundPlayer("C:\\Users\\danil\\source\\repos\\BlackjackGame2\\BlackjackGame2\\drawcard.sfx.wav");
                 while (DealerHand.GetTotalValue() < 17)
                 {
+
                     // O dealer saca uma nova carta usando a função fornecida
                     Card newCard = await drawCardFunc();
+                    drawcardsfx.Play();
+                    Thread.Sleep(1000);
                     DealerHand.Cards.Add(newCard);
 
                     // Atualiza a interface gráfica
@@ -346,5 +364,29 @@ namespace BlackjackGame2
             }
         }
 
+        private void Doublebtn_Click(object sender, EventArgs e)
+        {
+            if (Dinheiro.Value / 2 < Aposta.Value)
+            {
+                MessageBox.Show("você não tem dinheiro pra isso");
+                Doublebtn.Enabled = false;
+            }
+            else
+            {
+                Dinheiro.Value -= Aposta.Value;
+                Aposta.Value = Aposta.Value * 2;
+                Hitbtn_Click(sender, e);
+            }
+
+
+        }
+
+        private void MainForm_Load_1(object sender, EventArgs e)
+        {
+            Aposta.Enabled = true;
+            Hitbtn.Enabled = false;
+            Standbtn.Enabled = false;
+            Doublebtn.Enabled = false;
+        }
     }
 }

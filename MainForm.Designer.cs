@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             lbldinheiro = new Label();
             Playerscore = new Label();
             Dealerscore = new Label();
@@ -48,7 +49,6 @@
             Standbtn = new Button();
             Betbtn = new Button();
             Aposta = new NumericUpDown();
-            richTextBox1 = new RichTextBox();
             Dinheiro = new NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)cartaplayer1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)cartaplayer2).BeginInit();
@@ -119,6 +119,7 @@
             // 
             // cartaplayer1
             // 
+            cartaplayer1.BackColor = Color.Transparent;
             cartaplayer1.Location = new Point(142, 39);
             cartaplayer1.Name = "cartaplayer1";
             cartaplayer1.Size = new Size(317, 434);
@@ -127,6 +128,7 @@
             // 
             // cartaplayer2
             // 
+            cartaplayer2.BackColor = Color.Transparent;
             cartaplayer2.Location = new Point(201, 39);
             cartaplayer2.Name = "cartaplayer2";
             cartaplayer2.Size = new Size(317, 434);
@@ -135,6 +137,7 @@
             // 
             // cartaplayer3
             // 
+            cartaplayer3.BackColor = Color.Transparent;
             cartaplayer3.Location = new Point(270, 39);
             cartaplayer3.Name = "cartaplayer3";
             cartaplayer3.Size = new Size(317, 434);
@@ -144,6 +147,7 @@
             // 
             // cartaplayer4
             // 
+            cartaplayer4.BackColor = Color.Transparent;
             cartaplayer4.Location = new Point(323, 39);
             cartaplayer4.Name = "cartaplayer4";
             cartaplayer4.Size = new Size(317, 434);
@@ -152,6 +156,7 @@
             // 
             // cartadealer1
             // 
+            cartadealer1.BackColor = Color.Transparent;
             cartadealer1.Location = new Point(696, 39);
             cartadealer1.Name = "cartadealer1";
             cartadealer1.Size = new Size(317, 434);
@@ -160,6 +165,7 @@
             // 
             // cartadealer2
             // 
+            cartadealer2.BackColor = Color.Transparent;
             cartadealer2.Location = new Point(752, 39);
             cartadealer2.Name = "cartadealer2";
             cartadealer2.Size = new Size(317, 434);
@@ -168,6 +174,7 @@
             // 
             // cartadealer3
             // 
+            cartadealer3.BackColor = Color.Transparent;
             cartadealer3.Location = new Point(820, 39);
             cartadealer3.Name = "cartadealer3";
             cartadealer3.Size = new Size(317, 434);
@@ -176,6 +183,8 @@
             // 
             // cartadealer4
             // 
+            cartadealer4.BackColor = Color.Transparent;
+            cartadealer4.BackgroundImageLayout = ImageLayout.Stretch;
             cartadealer4.Location = new Point(894, 39);
             cartadealer4.Name = "cartadealer4";
             cartadealer4.Size = new Size(317, 434);
@@ -184,6 +193,7 @@
             // 
             // cartaplayer5
             // 
+            cartaplayer5.BackColor = Color.Transparent;
             cartaplayer5.Location = new Point(382, 39);
             cartaplayer5.Name = "cartaplayer5";
             cartaplayer5.Size = new Size(317, 434);
@@ -209,6 +219,7 @@
             Doublebtn.TabIndex = 16;
             Doublebtn.Text = "Double";
             Doublebtn.UseVisualStyleBackColor = true;
+            Doublebtn.Click += Doublebtn_Click;
             // 
             // Standbtn
             // 
@@ -238,14 +249,6 @@
             Aposta.Size = new Size(75, 23);
             Aposta.TabIndex = 19;
             // 
-            // richTextBox1
-            // 
-            richTextBox1.Location = new Point(22, 305);
-            richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(114, 186);
-            richTextBox1.TabIndex = 20;
-            richTextBox1.Text = "";
-            // 
             // Dinheiro
             // 
             Dinheiro.Location = new Point(24, 39);
@@ -259,9 +262,10 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackgroundImage = (Image)resources.GetObject("$this.BackgroundImage");
+            BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(1254, 528);
             Controls.Add(Dinheiro);
-            Controls.Add(richTextBox1);
             Controls.Add(Aposta);
             Controls.Add(Betbtn);
             Controls.Add(Standbtn);
@@ -283,7 +287,8 @@
             Controls.Add(Playerscore);
             Controls.Add(lbldinheiro);
             Name = "MainForm";
-            Text = "Form1";
+            Text = "Blackjack ( 21 )";
+            Load += MainForm_Load_1;
             ((System.ComponentModel.ISupportInitialize)cartaplayer1).EndInit();
             ((System.ComponentModel.ISupportInitialize)cartaplayer2).EndInit();
             ((System.ComponentModel.ISupportInitialize)cartaplayer3).EndInit();
@@ -321,7 +326,6 @@
         private Button Standbtn;
         private Button Betbtn;
         private NumericUpDown Aposta;
-        private RichTextBox richTextBox1;
         private NumericUpDown Dinheiro;
     }
 }
